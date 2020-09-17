@@ -38,11 +38,10 @@ def create_parser():
 
 
 class MenuState(ABC):
-    def __init__(self, state_name: str, image: str, commands: List[str], options: dict):
+    def __init__(self, state_name: str, image: str, commands: List[str]):
         self.state_name = state_name
         self.image = image
         self.commands = commands
-        self.options = options
 
     def run(self) -> bool:
         coordinates = self.find_image(os.path.join('data', self.image))
@@ -90,12 +89,11 @@ class TekkenState:
         self.ranked_lobby = None
         self.post_match = None
 
-        for state, state_data in self.states_data:
+        for state, state_data in self.states_data.items():
             image = state_data["image"]
             commands = state_data["commands"]
-            options = state_data["options"]
 
-            setattr(self, state, MenuState(state, image, commands, options))
+            setattr(self, state, MenuState(state, image, commands))
 
     def scan_state(self):
         for state_name, state_data in self.states_data.items():
