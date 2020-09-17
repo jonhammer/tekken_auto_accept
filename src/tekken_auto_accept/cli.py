@@ -62,7 +62,7 @@ class MenuState(ABC):
 class TekkenState:
 
     states_data = {
-        "main_menu": {"image": "main_menu_online.PNG", "commands": ["down", "enter"],},
+        "main_menu": {"image": "main_menu.PNG", "commands": ["down", "enter"],},
         "online_menu": {"image": "online_menu.PNG", "commands": ["enter"],},
         "ranked_search_menu": {
             "image": "ranked_search_menu.PNG",
