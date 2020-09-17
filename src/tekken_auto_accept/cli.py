@@ -114,15 +114,15 @@ class TekkenState:
 
     def run(self):
         while True:
-            self.scan_state()
-            if not self.startup and self.current_state_name in [
-                "ranked_lobby",
-                "post_match",
-            ]:
-                self.current_state = self.get_state(self.current_state_name)
-                self.current_state.run()
-            else:
-                self.current_state.run()
+            if self.scan_state():
+                if not self.startup and self.current_state_name in [
+                    "ranked_lobby",
+                    "post_match",
+                ]:
+                    self.current_state = self.get_state(self.current_state_name)
+                    self.current_state.run()
+                else:
+                    self.current_state.run()
 
 
 def main():
