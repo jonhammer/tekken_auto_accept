@@ -45,9 +45,9 @@ class MenuState(ABC):
 
     def run(self) -> bool:
         dir_path = os.path.dirname(os.path.realpath(__file__))
-        coordinates = self.find_image(os.path.join(dir_path, 'data', self.image))
+        coordinates = self.find_image(os.path.join(dir_path, "data", self.image))
         if coordinates:
-            if self.state_name == 'post_match':
+            if self.state_name == "post_match":
                 sleep(5)
             for command in self.commands:
                 pyautogui.press(command)
@@ -55,7 +55,7 @@ class MenuState(ABC):
 
     @staticmethod
     def find_image(image) -> List[int]:
-        coordinates = pyautogui.locateOnScreen(image)
+        coordinates = pyautogui.locateOnScreen(image, confidence=0.5)
         if coordinates:
             return coordinates
 
@@ -77,7 +77,7 @@ class TekkenState:
     }
 
     def __init__(self):
-        self.current_state_name = None
+        self.current_state_name = "main_menu"
         self.startup = True
 
         self.current_state = None
@@ -96,10 +96,14 @@ class TekkenState:
 
             setattr(self, state, MenuState(state, image, commands))
 
+        self.set_state(self.current_state_name)
+
     def scan_state(self):
         for state_name, state_data in self.states_data.items():
             dir_path = os.path.dirname(os.path.realpath(__file__))
-            if pyautogui.locateOnScreen(os.path.join(dir_path, 'data', state_data["image"])):
+            if pyautogui.locateOnScreen(
+                os.path.join(dir_path, "data", state_data["image"]), confidence=0.5
+            ):
                 if self.startup:
                     self.startup = False
                 self.set_state(state_name)
@@ -136,9 +140,8 @@ def main():
             "args.character"
         ]
 
-    tekken_state.current_state_name = "main_menu"
     tekken_state.run()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()
