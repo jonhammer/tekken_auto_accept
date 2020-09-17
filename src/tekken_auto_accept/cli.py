@@ -98,7 +98,8 @@ class TekkenState:
 
     def scan_state(self):
         for state_name, state_data in self.states_data.items():
-            if pyautogui.locateOnScreen(state_data["image"]):
+            dir_path = os.path.dirname(os.path.realpath(__file__))
+            if pyautogui.locateOnScreen(os.path.join(dir_path, 'data', state_data["image"])):
                 if self.startup:
                     self.startup = False
                 self.set_state(state_name)
@@ -137,3 +138,7 @@ def main():
 
     tekken_state.current_state_name = "main_menu"
     tekken_state.run()
+
+
+if __name__ == '__main__':
+    main()
