@@ -127,7 +127,7 @@ def main():
     parser = create_parser()
     args = parser.parse_args()
     tekken_state = TekkenState()
-    if args.side_select:
+    if args.side:
         tekken_state.states_data["side_select"]["commands"] = SIDE_MAP["args.side"]
     if args.character:
         tekken_state.states_data["character_select"]["commands"] = CHARACTER_MAP[
