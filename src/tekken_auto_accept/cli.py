@@ -44,7 +44,8 @@ class MenuState(ABC):
         self.commands = commands
 
     def run(self) -> bool:
-        coordinates = self.find_image(os.path.join('data', self.image))
+        dir_path = os.path.dirname(os.path.realpath(__file__))
+        coordinates = self.find_image(os.path.join(dir_path, 'data', self.image))
         if coordinates:
             if self.state_name == 'post_match':
                 sleep(5)
