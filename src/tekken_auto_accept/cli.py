@@ -6,9 +6,11 @@ from time import sleep
 
 import pyautogui
 
-SIDE_MAP = {"left": ["enter"], "right": ["left", "enter"]}
+from tekken_auto_accept.control import TekkenController
 
-CHARACTER_MAP = {"test": ["left, left", "left", "enter"]}
+SIDE_MAP = {"left": ["b"], "right": ["left", "b"]}
+
+CHARACTER_MAP = {"test": ["left, left", "left", "b"]}
 
 
 def create_parser():
@@ -43,19 +45,14 @@ class MenuState(ABC):
         self.image = image
         self.commands = commands
 
-    def run(self) -> bool:
-        dir_path = os.path.dirname(os.path.realpath(__file__))
-        coordinates = self.find_image(os.path.join(dir_path, "data", self.image))
-        if coordinates:
-            if self.state_name == "post_match":
-                sleep(5)
-            for command in self.commands:
-                pyautogui.press(command)
-            return True
+    def run(self) -> List[str]:
+        if self.state_name == "post_match":
+            sleep(3)
+        return self.commands
 
     @staticmethod
     def find_image(image) -> List[int]:
-        coordinates = pyautogui.locateOnScreen(image, confidence=0.5)
+        coordinates = pyautogui.locateOnScreen(image, confidence=0.9)
         if coordinates:
             return coordinates
 
@@ -63,24 +60,26 @@ class MenuState(ABC):
 class TekkenState:
 
     states_data = {
-        "main_menu": {"image": "main_menu.PNG", "commands": ["down", "enter"],},
-        "online_menu": {"image": "online_menu.PNG", "commands": ["enter"],},
+        "main_menu": {"image": "main_menu.PNG", "commands": ["down", "b"],},
+        "online_menu": {"image": "online_menu.PNG", "commands": ["b"],},
         "ranked_search_menu": {
             "image": "ranked_search_menu.PNG",
-            "commands": ["up", "enter"],
+            "commands": ["up", "b"],
         },
-        "side_select": {"image": "side_select.PNG", "commands": ["enter"],},
-        "character_select": {"image": "character_select.PNG", "commands": "enter",},
-        "new_challenger": {"image": "new_challenger.PNG", "commands": ["enter"],},
-        "post_match": {"image": "post_match.PNG", "commands": ["enter"],},
-        "no_rematch": {"image": "no_rematch.PNG", "commands": ["enter"]},
+        "side_select": {"image": "side_select.PNG", "commands": ["b"],},
+        "character_select": {"image": "character_select.PNG", "commands": "b",},
+        "new_challenger": {"image": "new_challenger.PNG", "commands": ["b"],},
+        "post_match": {"image": "post_match.PNG", "commands": ["b"],},
+        "no_rematch": {"image": "no_rematch.PNG", "commands": ["b"]},
     }
 
     def __init__(self):
-        self.current_state_name = "main_menu"
-        self.startup = True
+        self.controller = TekkenController()
 
+        self.current_state_name = "main_menu"
         self.current_state = None
+
+        self.in_startup = True
 
         self.main_menu = None
         self.online_menu = None
@@ -99,17 +98,20 @@ class TekkenState:
         self.set_state(self.current_state_name)
 
     def scan_state(self):
+        if not self.in_startup:
+            sleep(1)
         for state_name, state_data in self.states_data.items():
+            current_screen = pyautogui.screenshot()
             dir_path = os.path.dirname(os.path.realpath(__file__))
-            if pyautogui.locateOnScreen(
-                os.path.join(dir_path, "data", state_data["image"]), confidence=0.5
+            if pyautogui.locate(
+                os.path.join(dir_path, "data", state_data["image"]), current_screen, confidence=0.9
             ):
-                if self.startup:
-                    self.startup = False
+                print("Found {}".format(state_data['image']))
                 self.set_state(state_name)
                 return True
 
     def set_state(self, state_name):
+        print("Setting state to {}".format(state_name))
         self.current_state_name = state_name
         self.current_state = getattr(self, state_name)
 
@@ -119,14 +121,14 @@ class TekkenState:
     def run(self):
         while True:
             if self.scan_state():
-                if not self.startup and self.current_state_name in [
-                    "ranked_lobby",
-                    "post_match",
-                ]:
-                    self.current_state = self.get_state(self.current_state_name)
-                    self.current_state.run()
-                else:
-                    self.current_state.run()
+                commands = self.current_state.run()
+                if self.current_state_name == 'character_select':
+                    self.in_startup = False
+
+                if not self.in_startup and self.current_state_name in ['new_challenger', 'post_match', 'no_rematch']:
+                    self.controller.run_commands(commands)
+                elif self.in_startup:
+                    self.controller.run_commands(commands)
 
 
 def main():
