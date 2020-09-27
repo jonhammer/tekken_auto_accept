@@ -87,8 +87,6 @@ class CharacterSelect(object):
             portraits = [i for i in os.listdir(data_path) if 'p2' not in i]
         else:
             portraits = [i for i in os.listdir(data_path) if 'p2' in i]
-        portraits = os.listdir(data_path)
-        print(portraits)
         current_screen = pyautogui.screenshot()
         for _i in range(3):
             print("looking for char on {}".format(self.side))
@@ -125,23 +123,25 @@ class CharacterSelect(object):
         elif self.current_row == 2 and self.current_col in [16, 17, 18]:
             self.current_row = 1
             return
-        self.current_row = (self.current_row + 1) % 3
+        self.current_row = (self.current_row + 1) % len(CHARACTERS)
 
     def move_up(self):
         self.moves.append("up")
-        if self.current_row == 0:
-            self.current_col += 3
-        elif self.current_row == 1 and self.current_col in [0, 1, 2]:
+        if self.current_row == 1 and self.current_col in [0, 1, 2]:
             self.current_row = 0
             self.current_col = 0
             return
-        elif self.current_row == 1 and self.current_col in [16, 17, 18]:
+        if self.current_row == 1 and self.current_col in [16, 17, 18]:
             self.current_row = 0
             self.current_col = 11
             return
-        elif self.current_row == 1:
+
+        if self.current_row == 0:
+            self.current_col += 3
+        if self.current_row == 1:
             self.current_col -= 3
-        self.current_row = (self.current_row - 1) % 3
+
+        self.current_row = (self.current_row - 1) % len(CHARACTERS)
 
     def move_right(self):
         self.moves.append("right")
@@ -153,8 +153,11 @@ class CharacterSelect(object):
 
     def get_moves(self):
         while True:
-            if self.current_row != self.desired_row:
+            if self.current_row > self.desired_row:
                 self.move_up()
+                continue
+            if self.current_row < self.desired_row:
+                self.move_down()
                 continue
             if self.current_col < self.desired_col:
                 self.move_right()
