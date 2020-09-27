@@ -1,6 +1,6 @@
 import argparse
 
-from models.tekken_state import TekkenState
+from tekken_auto_accept.models.tekken_state import TekkenState
 
 SIDE_MAP = {"left": ["b"], "right": ["left", "b"]}
 

@@ -3,8 +3,8 @@ import time
 
 import pyautogui
 
-from control import TekkenController
-from models.menu import MenuState
+from tekken_auto_accept.control import TekkenController
+from tekken_auto_accept.models.menu import MenuState
 
 
 class TekkenState:
@@ -39,6 +39,10 @@ class TekkenState:
             "commands": ["b"],
         },
         "no_rematch": {"image": "no_rematch.PNG", "commands": ["b"]},
+        "loading": {
+            "image": "loading.PNG",
+            "commands": []
+        }
     }
 
     def __init__(self, character, side):
@@ -51,6 +55,7 @@ class TekkenState:
             self.states_data['side_select']['commands'] = ["right", "b"]
 
         self.current_state_name = "main_menu"
+        self.previous_state_name = None
         self.current_state = None
         self.current_screen = None
 

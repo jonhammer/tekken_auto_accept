@@ -58,7 +58,7 @@ CHARACTERS = [
         "leo",
         "feng",
         "eddy",
-        "kuma",
+        "panda",
     ],
 ]
 
@@ -75,6 +75,7 @@ class CharacterSelect(object):
 
         self.current_row, self.current_col = self.get_char_location(self.selected_char)
         self.desired_row, self.desired_col = self.get_char_location(self.desired_char)
+        print(self.current_row, self.current_col)
         print(self.desired_row, self.desired_col)
 
         self.moves = []
@@ -94,7 +95,7 @@ class CharacterSelect(object):
                 if pyautogui.locate(
                         os.path.join(data_path, portrait),
                         current_screen,
-                        confidence=0.9,
+                        confidence=0.8,
                         grayscale=True
                 ):
                     self.selected_char = portrait.replace('.png', '').replace('-p2', '')
@@ -103,6 +104,7 @@ class CharacterSelect(object):
 
     @staticmethod
     def get_char_location(character):
+        print("looking for {}.".format(character))
         char_row = None
         char_col = None
         for i, row in enumerate(CHARACTERS):
@@ -123,7 +125,7 @@ class CharacterSelect(object):
         elif self.current_row == 2 and self.current_col in [16, 17, 18]:
             self.current_row = 1
             return
-        self.current_row = (self.current_row + 1) % len(CHARACTERS)
+        self.current_row = (self.current_row + 1) % len(CHARACTERS) - 1
 
     def move_up(self):
         self.moves.append("up")
@@ -133,7 +135,7 @@ class CharacterSelect(object):
             return
         if self.current_row == 1 and self.current_col in [16, 17, 18]:
             self.current_row = 0
-            self.current_col = 11
+            self.current_col = 12
             return
 
         if self.current_row == 0:
