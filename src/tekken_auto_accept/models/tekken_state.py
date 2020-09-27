@@ -45,6 +45,7 @@ class TekkenState:
         self.controller = TekkenController()
         self.character = character
         self.side = side
+        self.selected_char = False
 
         if self.side == 'p2':
             self.states_data['side_select']['commands'] = ["right", "b"]
@@ -72,7 +73,7 @@ class TekkenState:
         self.set_state(self.current_state_name)
 
     def scan_state(self):
-        if not self.in_startup:
+        if self.selected_char:
             time.sleep(1)
         for state_name, state_data in self.states_data.items():
             self.current_screen = pyautogui.screenshot()
@@ -97,16 +98,8 @@ class TekkenState:
 
     def run(self):
         while True:
+            if self.selected_char:
+                time.sleep(1)
             if self.scan_state():
                 commands = self.current_state.run()
-                if self.current_state_name == "character_select":
-                    self.in_startup = False
-
-                if not self.in_startup and self.current_state_name in [
-                    "new_challenger",
-                    "post_match",
-                    "no_rematch",
-                ]:
-                    self.controller.run_commands(commands)
-                elif self.in_startup:
-                    self.controller.run_commands(commands)
+                self.controller.run_commands(commands)

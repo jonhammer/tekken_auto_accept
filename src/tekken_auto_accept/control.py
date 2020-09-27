@@ -113,6 +113,7 @@ def tap_key(hex_key_code):
     press_key(hex_key_code)
     sleep(0.1)
     release_key(hex_key_code)
+    sleep(0.1)
         
         
 class TekkenController:
@@ -138,7 +139,7 @@ class TekkenController:
         tap_key(self.map.LEFT)
         
     def right(self):
-        tap_key(self.map.LEFT)
+        tap_key(self.map.RIGHT)
         
     def a(self):
         tap_key(self.map.A)

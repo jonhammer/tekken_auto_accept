@@ -2,6 +2,7 @@ import time
 from typing import List
 
 from models.character_select import CharacterSelect
+from tekken_auto_accept.alerts.Alert import Sound
 
 
 class MenuState(object):
@@ -17,6 +18,11 @@ class MenuState(object):
         elif self.state_name == 'character_select':
             select_screen = CharacterSelect(self.tekken_state.character, self.tekken_state.side)
             select_screen.get_moves()
+            print("Got moves: {}".format(select_screen.moves))
             self.commands = select_screen.moves
+            self.tekken_state.selected_char = True
+        elif self.state_name == 'new_challenger':
+            alert = Sound()
+            alert.trigger()
 
         return self.commands

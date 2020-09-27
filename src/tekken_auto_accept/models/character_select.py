@@ -70,29 +70,38 @@ class CharacterSelect(object):
         self.selected_char = None
 
         self.get_currently_selected()
+        print(self.selected_char)
+        print(self.desired_char)
 
         self.current_row, self.current_col = self.get_char_location(self.selected_char)
         self.desired_row, self.desired_col = self.get_char_location(self.desired_char)
+        print(self.desired_row, self.desired_col)
 
         self.moves = []
 
     def get_currently_selected(self):
 
-        current_screen = pyautogui.screenshot()
         dir_path = os.path.dirname(os.path.realpath(__file__))
         data_path = os.path.abspath(os.path.join(dir_path, '..', 'data', 'chars'))
         if self.side == 'p1':
             portraits = [i for i in os.listdir(data_path) if 'p2' not in i]
         else:
             portraits = [i for i in os.listdir(data_path) if 'p2' in i]
-        for portrait in portraits:
-            if pyautogui.locate(
-                    os.path.join(data_path, portrait),
-                    current_screen,
-                    confidence=0.9,
-            ):
-                self.selected_char = portrait.replace('.png', '').replace('-p2', '')
-                return
+        portraits = os.listdir(data_path)
+        print(portraits)
+        current_screen = pyautogui.screenshot()
+        for _i in range(3):
+            print("looking for char on {}".format(self.side))
+            for portrait in portraits:
+                if pyautogui.locate(
+                        os.path.join(data_path, portrait),
+                        current_screen,
+                        confidence=0.9,
+                        grayscale=True
+                ):
+                    self.selected_char = portrait.replace('.png', '').replace('-p2', '')
+                    print("Got char {}".format(portrait))
+                    return
 
     @staticmethod
     def get_char_location(character):
