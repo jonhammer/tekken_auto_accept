@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/../tekken_auto_accept/.idea/tekken_auto_accept.iml" filepath="$PROJECT_DIR$/../tekken_auto_accept/.idea/tekken_auto_accept.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/tekken_auto_accept.iml" filepath="$PROJECT_DIR$/.idea/tekken_auto_accept.iml" />
     </modules>
   </component>
 </project>

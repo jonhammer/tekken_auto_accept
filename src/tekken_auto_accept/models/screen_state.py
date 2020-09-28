@@ -1,26 +1,30 @@
 import os
+from typing import List
 
 import pyautogui
 
 
 class ScreenState(object):
-    def __int__(self):
+    def __init__(self):
         self.current_screen = None
 
-    def scan_screen(self, images: str) -> str:
+    def capture_screen(self):
+        self.current_screen = pyautogui.screenshot()
+
+    def scan_screen(self, images: List[str]) -> str:
         """
         Scan the screen for the list of images
         :param images: List of image file paths
         :return: Name of image found
         """
+        self.capture_screen()
         for image in images:
-            self.current_screen = pyautogui.screenshot()
-            dir_path = os.path.dirname(os.path.realpath(__file__))
-            data_path = os.path.abspath(os.path.join(dir_path, '..', 'data'))
+            #print("looking for {}".format(image))
+            image_name = os.path.basename(image).lower().replace('.png', '')
             if pyautogui.locate(
-                    os.path.join(data_path, image),
+                    image,
                     self.current_screen,
                     confidence=0.9,
             ):
-                print("Found {}".format(image))
-                return image
+                print("Found {}".format(image_name))
+                return image_name
