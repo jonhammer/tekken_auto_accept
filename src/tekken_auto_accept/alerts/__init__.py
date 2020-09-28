@@ -22,6 +22,10 @@ class Sound(Alert):
 
 
 class PushOver(Alert):
+    def __int__(self):
+        self.app_token = None
+        self.user_token = None
+
     def trigger(self):
         conn = http.client.HTTPSConnection("api.pushover.net:443")
         conn.request(
@@ -29,9 +33,10 @@ class PushOver(Alert):
             "/1/messages.json",
             urllib.parse.urlencode(
                 {
-                    "token": "TOKEN",
-                    "user": "USER",
+                    "token": self.app_token,
+                    "user": self.user_token,
                     "message": "Found Tekken match",
+                    "priority": 1,
                 }
             ),
             {"Content-type": "application/x-www-form-urlencoded"},

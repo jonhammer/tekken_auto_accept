@@ -1,110 +1,55 @@
 import os
 
-import pyautogui
-
-CHARACTERS = [
-    [
-        "ganryu",
-        "zafina",
-        "julia",
-        "marduk",
-        "anna",
-        "geese",
-        "eliza",
-        "noctis",
-        "lei",
-        "aking",
-        "negan",
-        "leroy",
-        "fahk",
-    ],
-    [
-        "raven",
-        "nina",
-        "yoshimitsu",
-        "dragunov",
-        "hwoarang",
-        "law",
-        "shaheen",
-        "akuma",
-        "kazuya",
-        "random",
-        "heihachi",
-        "kazumi",
-        "chloe",
-        "lili",
-        "lars",
-        "ling",
-        "jack",
-        "lee",
-        "kuma",
-    ],
-    [
-        "miguel",
-        "bob",
-        "bryan",
-        "king",
-        "steve",
-        "paul",
-        "josie",
-        "katarina",
-        "jin",
-        "random",
-        "dvj",
-        "claudio",
-        "gigas",
-        "asuka",
-        "alisa",
-        "leo",
-        "feng",
-        "eddy",
-        "panda",
-    ],
-]
+from tekken_auto_accept.errors import CharacterNotFound
+from tekken_auto_accept.models.screen_state import ScreenState
+from tekken_auto_accept.settings import CHARACTERS
 
 
 class CharacterSelect(object):
-    def __init__(self, desired_char, side):
-        self.side = side
-        self.desired_char = desired_char
+    def __init__(self):
+        self.desired_char = None
         self.selected_char = None
 
-        self.get_currently_selected()
-        print(self.selected_char)
-        print(self.desired_char)
-
-        self.current_row, self.current_col = self.get_char_location(self.selected_char)
-        self.desired_row, self.desired_col = self.get_char_location(self.desired_char)
-        print(self.current_row, self.current_col)
-        print(self.desired_row, self.desired_col)
+        self.current_row = None
+        self.current_col = None
+        self.desired_row = None
+        self.desired_col = None
 
         self.moves = []
 
-    def get_currently_selected(self):
+        self.portraits = None
+        self.scanner = ScreenState()
 
+    def get_portraits(self, side):
         dir_path = os.path.dirname(os.path.realpath(__file__))
         data_path = os.path.abspath(os.path.join(dir_path, '..', 'data', 'chars'))
-        if self.side == 'p1':
-            portraits = [i for i in os.listdir(data_path) if 'p2' not in i]
+        if side == 'p1':
+            self.portraits = [i for i in os.listdir(data_path) if 'p2' not in i]
         else:
-            portraits = [i for i in os.listdir(data_path) if 'p2' in i]
-        current_screen = pyautogui.screenshot()
+            self.portraits = [i for i in os.listdir(data_path) if 'p2' in i]
+        self.portraits = [os.path.join(data_path, i) for i in self.portraits]
+
+    def run(self):
+        self.desired_row, self.desired_col = self.get_char_location(self.desired_char)
+        print(self.current_row, self.current_col)
+        print(self.desired_row, self.desired_col)
+        self.get_currently_selected()
+        self.current_row, self.current_col = self.get_char_location(self.selected_char)
+        self.get_moves()
+        return self.moves
+
+    def get_currently_selected(self):
+
         for _i in range(3):
-            print("looking for char on {}".format(self.side))
-            for portrait in portraits:
-                if pyautogui.locate(
-                        os.path.join(data_path, portrait),
-                        current_screen,
-                        confidence=0.8,
-                        grayscale=True
-                ):
-                    self.selected_char = portrait.replace('.png', '').replace('-p2', '')
-                    print("Got char {}".format(portrait))
-                    return
+            character = self.scanner.scan_screen(self.portraits)
+            if character:
+                self.selected_char = character.replace('.png', '').replace('-p2', '')
+                print("Got char {}".format(character))
+                return
+        raise CharacterNotFound("Could not find any character")
 
     @staticmethod
     def get_char_location(character):
-        print("looking for {}.".format(character))
         char_row = None
         char_col = None
         for i, row in enumerate(CHARACTERS):
