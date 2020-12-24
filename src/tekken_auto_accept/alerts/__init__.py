@@ -31,7 +31,12 @@ class PushOver(Alert):
         self.user_token = None
 
     def trigger(self):
-        data = {"token": self.app_token, "user": self.user_token, "message": "Found Tekken Match", "priority": 1}
+        data = {
+            "token": self.app_token,
+            "user": self.user_token,
+            "message": "Found Tekken Match",
+            "priority": 1,
+        }
         response = requests.post(self.URL, data=data)
         if not response.status_code == 200:
             raise AlertError("Unable to send PushOver Alert")

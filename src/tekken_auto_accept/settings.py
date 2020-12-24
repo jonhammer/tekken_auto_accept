@@ -1,14 +1,14 @@
 MENU_ORDER = [
-    'main_menu',
-    'online_menu',
-    'ranked_search_menu',
-    'side_select',
-    'character_select',
-    'waiting_for_challenger',
-    'new_challenger',
-    'post_match',
-    'no_rematch',
-    'loading',
+    "main_menu",
+    "online_menu",
+    "ranked_search_menu",
+    "side_select",
+    "character_select",
+    "waiting_for_challenger",
+    "new_challenger",
+    "post_match",
+    "no_rematch",
+    "loading",
 ]
 
 MENU_DATA = {
@@ -41,14 +41,11 @@ MENU_DATA = {
         "commands": ["b"],
     },
     "no_rematch": {"image": "no_rematch.PNG", "commands": ["b"]},
-    "loading": {
-        "image": "loading.PNG",
-        "commands": []
-    },
+    "loading": {"image": "loading.PNG", "commands": []},
     "waiting_for_challenger": {
         "image": "waiting_for_challenger.PNG",
         "commands": [],
-    }
+    },
 }
 
 CHARACTERS = [

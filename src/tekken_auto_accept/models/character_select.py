@@ -25,11 +25,11 @@ class CharacterSelect(object):
 
     def get_portraits(self, side):
         dir_path = os.path.dirname(os.path.realpath(__file__))
-        data_path = os.path.abspath(os.path.join(dir_path, '..', 'data', 'chars'))
-        if side == 'p1':
-            self.portraits = [i for i in os.listdir(data_path) if 'p2' not in i]
+        data_path = os.path.abspath(os.path.join(dir_path, "..", "data", "chars"))
+        if side == "p1":
+            self.portraits = [i for i in os.listdir(data_path) if "p2" not in i]
         else:
-            self.portraits = [i for i in os.listdir(data_path) if 'p2' in i]
+            self.portraits = [i for i in os.listdir(data_path) if "p2" in i]
         self.portraits = [os.path.join(data_path, i) for i in self.portraits]
 
     def run(self):
@@ -47,7 +47,7 @@ class CharacterSelect(object):
         for _i in range(3):
             character = self.scanner.scan_screen(self.portraits)
             if character:
-                self.selected_char = character.replace('.png', '').replace('-p2', '')
+                self.selected_char = character.replace(".png", "").replace("-p2", "")
                 logger.debug(f"Got char {character}")
                 return
         raise CharacterNotFound("Could not find any character")
@@ -74,7 +74,7 @@ class CharacterSelect(object):
         elif self.current_row == 2 and self.current_col in [16, 17, 18]:
             self.current_row = 1
             return
-        self.current_row = (self.current_row + 1)
+        self.current_row = self.current_row + 1
 
     def move_up(self):
         self.moves.append("up")
@@ -92,7 +92,7 @@ class CharacterSelect(object):
         if self.current_row == 1:
             self.current_col -= 2
 
-        self.current_row = (self.current_row - 1)
+        self.current_row = self.current_row - 1
 
     def move_right(self):
         self.moves.append("right")
@@ -118,6 +118,9 @@ class CharacterSelect(object):
             if self.current_col > self.desired_col:
                 self.move_left()
                 continue
-            if self.current_row == self.desired_row and self.current_col == self.desired_col:
+            if (
+                self.current_row == self.desired_row
+                and self.current_col == self.desired_col
+            ):
                 break
-        self.moves.append('b')
+        self.moves.append("b")

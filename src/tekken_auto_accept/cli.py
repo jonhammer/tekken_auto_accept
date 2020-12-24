@@ -16,6 +16,7 @@ from tekken_auto_accept.util import probable_next_state
 
 @Gooey(
     program_name="Tekken Auto-Accept",
+    show_stop_warning=False,
 )
 def create_parser():
     """Parses command line args."""
@@ -29,13 +30,25 @@ def create_parser():
         epilog=epilog,
     )
     parser.add_argument(
+        "--auto_select",
+        help="Automatically navigate menus and select your character and start looking for matches",
+        default=False,
+        action="store_true",
+    )
+    parser.add_argument(
         "-c",
         "--character",
-        required=True,
         choices=sorted(CHARACTERS[0] + CHARACTERS[1] + CHARACTERS[2]),
-        default='marduk',
+        default="marduk",
+        help="Only needed for auto_select",
     )
-    parser.add_argument("-s", "--side", default="p1", choices=["p1", "p2"])
+    parser.add_argument(
+        "-s",
+        "--side",
+        default="p1",
+        choices=["p1", "p2"],
+        help="Only needed for auto_select",
+    )
     parser.add_argument(
         "-r",
         "--rematch",
@@ -71,6 +84,10 @@ def main():
                 "Must provide pushover tokens for pushover alerts. See https://pushover.net/"
             )
 
+    if args.auto_select:
+        if not all([args.character, args.side]):
+            raise ValueError("Must select character + side for auto-selection")
+
     logger = logging.getLogger(__name__)
     logging.basicConfig(
         format="%(asctime)s: %(levelname)s - %(threadName)s - %(module)s:%(lineno)s - %(message)s",
@@ -91,7 +108,7 @@ def main():
         0.5  # Duration to wait between scanning + before inputting commands
     )
     last_alert_time = time.time()
-
+    logger.info("Scanning for game state.")
     logger.info("Scanning for game state.")
     while True:
 

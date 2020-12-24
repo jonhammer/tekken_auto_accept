@@ -33,7 +33,7 @@ class TekkenState:
 
         for state, state_data in MENU_DATA.items():
             commands = state_data["commands"]
-            if state == 'character_select':
+            if state == "character_select":
                 setattr(self, state, CharacterSelect())
             else:
                 setattr(self, state, TekkenMenu(state, commands))
@@ -41,23 +41,47 @@ class TekkenState:
         self.set_state(self.current_state_name)
 
         dir_path = os.path.dirname(os.path.realpath(__file__))
-        data_path = os.path.abspath(os.path.join(dir_path, '..', 'data'))
-        self.state_images = [os.path.join(data_path, i) for i in os.listdir(data_path) if '.png' in i.lower()]
-        loading_image = next((i for i in self.state_images if 'loading' in i), None)
-        new_challenger_image = next((i for i in self.state_images if 'new_challenger' in i), None)
-        post_match_image = next((i for i in self.state_images if 'post_match' in i), None)
+        data_path = os.path.abspath(os.path.join(dir_path, "..", "data"))
+        self.state_images = [
+            os.path.join(data_path, i)
+            for i in os.listdir(data_path)
+            if ".png" in i.lower()
+        ]
+        loading_image = next((i for i in self.state_images if "loading" in i), None)
+        new_challenger_image = next(
+            (i for i in self.state_images if "new_challenger" in i), None
+        )
+        post_match_image = next(
+            (i for i in self.state_images if "post_match" in i), None
+        )
         for i in range(len(self.state_images) // 3):
-            self.state_images.insert(randint(0, len(self.state_images) - 1), new_challenger_image)
-            self.state_images.insert(randint(0, len(self.state_images) - 1), loading_image)
-            self.state_images.insert(randint(0, len(self.state_images) - 1), post_match_image)
+            self.state_images.insert(
+                randint(0, len(self.state_images) - 1), new_challenger_image
+            )
+            self.state_images.insert(
+                randint(0, len(self.state_images) - 1), loading_image
+            )
+            self.state_images.insert(
+                randint(0, len(self.state_images) - 1), post_match_image
+            )
 
     def process_config(self, tekken_config):
         self.character_select.desired_char = tekken_config.character
         self.character_select.get_portraits(tekken_config.side)
-        if tekken_config.side == 'p2':
+        if tekken_config.side == "p2":
             self.side_select.commands = ["right", "b"]
         self.alert = tekken_config.alert
         self.rematch = tekken_config.rematch
+        if not tekken_config.auto_select:
+            selection_menus = [
+                self.main_menu,
+                self.online_menu,
+                self.ranked_search_menu,
+                self.side_select,
+                self.character_select,
+            ]
+            for menu in selection_menus:
+                menu.commands = []
 
     def set_state(self, state_name):
         logger.info(f"Setting state to {state_name}")
