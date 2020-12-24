@@ -9,6 +9,7 @@ MENU_ORDER = [
     "post_match",
     "no_rematch",
     "loading",
+    "cancel_search",
 ]
 
 MENU_DATA = {
@@ -46,6 +47,7 @@ MENU_DATA = {
         "image": "waiting_for_challenger.PNG",
         "commands": [],
     },
+    "cancel_search": {"image": "cancel_search.PNG", "commands": ["right", "b"]}
 }
 
 CHARACTERS = [

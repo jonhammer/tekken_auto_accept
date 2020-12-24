@@ -10,70 +10,16 @@ from tekken_auto_accept.control import TekkenController
 from tekken_auto_accept.models.screen_state import ScreenState
 from tekken_auto_accept.models.tekken_state import TekkenState
 from tekken_auto_accept.models.tekkenconfig import TekkenConfig
-from tekken_auto_accept.settings import CHARACTERS
+from tekken_auto_accept.tekken_gui import create_parser
 from tekken_auto_accept.util import probable_next_state
 
 
 @Gooey(
     program_name="Tekken Auto-Accept",
     show_stop_warning=False,
+    navigation="Tabbed",
+    tabbed_groups=True,
 )
-def create_parser():
-    """Parses command line args."""
-    epilog = """
-
-        e.g., tekken_auto_accept -c marduk
-
-    """
-    parser = argparse.ArgumentParser(
-        description="Automatically accept ranked matches",
-        epilog=epilog,
-    )
-    parser.add_argument(
-        "--auto_select",
-        help="Automatically navigate menus and select your character and start looking for matches",
-        default=False,
-        action="store_true",
-    )
-    parser.add_argument(
-        "-c",
-        "--character",
-        choices=sorted(CHARACTERS[0] + CHARACTERS[1] + CHARACTERS[2]),
-        default="marduk",
-        help="Only needed for auto_select",
-    )
-    parser.add_argument(
-        "-s",
-        "--side",
-        default="p1",
-        choices=["p1", "p2"],
-        help="Only needed for auto_select",
-    )
-    parser.add_argument(
-        "-r",
-        "--rematch",
-        help="Auto re-match",
-        default=False,
-        action="store_true",
-    )
-    parser.add_argument(
-        "-a",
-        "--alert",
-        help="Type of alert to send when match is found",
-        choices=["sound", "pushover", "none"],
-        default="sound",
-    )
-    parser.add_argument("--pushover_user_token", required=False)
-    parser.add_argument("--pushover_app_token", required=False)
-    parser.add_argument(
-        "-l",
-        "--log-level",
-        choices=["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"],
-        default="INFO",
-    )
-    return parser
-
-
 def main():
     parser = create_parser()
     args = parser.parse_args()
@@ -105,12 +51,13 @@ def main():
 
     next_state = []
     sleep_duration = (
-        0.5  # Duration to wait between scanning + before inputting commands
+        .5  # Duration to wait between scanning + before inputting commands
     )
     last_alert_time = time.time()
     logger.info("Scanning for game state.")
-    logger.info("Scanning for game state.")
     while True:
+        logger.debug("Scanning for game state")
+        time.sleep(sleep_duration)
 
         current_screen = None
 
@@ -125,21 +72,15 @@ def main():
             current_screen = screen_scanner.scan_screen(tekken_state.state_images)
 
         if not current_screen:
-            time.sleep(sleep_duration)
             continue
 
         tekken_state.set_state(current_screen)
         commands = tekken_state.current_state.run()
+        time.sleep(sleep_duration)
         if commands:
-            if [
-                i
-                for i in ["no_rematch", "post_match"]
-                if i in tekken_state.current_state_name
-            ]:
-                if not args.rematch:
-                    continue
-            time.sleep(sleep_duration)
-        controller.run_commands(commands)
+            controller.run_commands(commands)
+        else:
+            continue
 
         if "new_challenger" in tekken_state.current_state_name and tekken_state.alert:
             now = time.time()
@@ -172,8 +113,6 @@ def main():
             next_state = []
         else:
             next_state = likely_next_state
-
-        time.sleep(sleep_duration)
 
 
 if __name__ == "__main__":

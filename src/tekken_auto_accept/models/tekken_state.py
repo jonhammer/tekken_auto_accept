@@ -30,6 +30,7 @@ class TekkenState:
         self.character_select = None
         self.ranked_lobby = None
         self.post_match = None
+        self.no_rematch = None
 
         for state, state_data in MENU_DATA.items():
             commands = state_data["commands"]
@@ -78,10 +79,13 @@ class TekkenState:
                 self.online_menu,
                 self.ranked_search_menu,
                 self.side_select,
-                self.character_select,
             ]
             for menu in selection_menus:
                 menu.commands = []
+            self.character_select.run = self.character_select.no_select
+        if not tekken_config.rematch:
+            self.post_match.commands = []
+            self.no_rematch.commands = []
 
     def set_state(self, state_name):
         logger.info(f"Setting state to {state_name}")

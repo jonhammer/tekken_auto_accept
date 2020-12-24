@@ -1,10 +1,13 @@
-import requests
+import logging
 import os
 from abc import ABC, abstractmethod
 
+import requests
 from playsound import playsound
 
 from tekken_auto_accept.errors import AlertError
+
+logger = logging.getLogger(__name__)
 
 
 class Alert(ABC):
@@ -15,6 +18,7 @@ class Alert(ABC):
 
 class Sound(Alert):
     def trigger(self):
+        logger.info("Sounding Alert")
         data_path = os.path.join(
             os.path.dirname(os.path.realpath(__file__)), "..", "data", "alerts"
         )
@@ -31,6 +35,7 @@ class PushOver(Alert):
         self.user_token = None
 
     def trigger(self):
+        logger.info("Sending Alert")
         data = {
             "token": self.app_token,
             "user": self.user_token,

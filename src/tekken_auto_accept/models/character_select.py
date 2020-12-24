@@ -124,3 +124,6 @@ class CharacterSelect(object):
             ):
                 break
         self.moves.append("b")
+
+    def no_select(self):
+        return None
