@@ -51,7 +51,7 @@ def main():
 
     next_state = []
     sleep_duration = (
-        .5  # Duration to wait between scanning + before inputting commands
+        0.5  # Duration to wait between scanning + before inputting commands
     )
     last_alert_time = time.time()
     logger.info("Scanning for game state.")

@@ -21,7 +21,10 @@ def create_parser():
         choices=["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"],
         default="INFO",
     )
-    alert_options = parser.add_argument_group("Alert Options", description="See https://pushover.net/ to setup push notifications")
+    alert_options = parser.add_argument_group(
+        "Alert Options",
+        description="See https://pushover.net/ to setup push notifications",
+    )
     alert_options.add_argument(
         "-a",
         "--alert",
@@ -44,7 +47,7 @@ def create_parser():
         "--character",
         choices=sorted(CHARACTERS[0] + CHARACTERS[1] + CHARACTERS[2]),
         default="marduk",
-        widget="FilterableDropdown"
+        widget="FilterableDropdown",
     )
     auto_select_options.add_argument(
         "-s",

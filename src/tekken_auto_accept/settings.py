@@ -47,7 +47,7 @@ MENU_DATA = {
         "image": "waiting_for_challenger.PNG",
         "commands": [],
     },
-    "cancel_search": {"image": "cancel_search.PNG", "commands": ["right", "b"]}
+    "cancel_search": {"image": "cancel_search.PNG", "commands": ["right", "b"]},
 }
 
 CHARACTERS = [
