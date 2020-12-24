@@ -38,9 +38,9 @@ MENU_DATA = {
     },
     "post_match": {
         "image": "post_match.PNG",
-        "commands": [],
+        "commands": ["b"],
     },
-    "no_rematch": {"image": "no_rematch.PNG", "commands": []},
+    "no_rematch": {"image": "no_rematch.PNG", "commands": ["b"]},
     "loading": {
         "image": "loading.PNG",
         "commands": []

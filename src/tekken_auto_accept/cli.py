@@ -1,17 +1,20 @@
 import argparse
+import logging
 import sys
 import time
+
+from gooey import Gooey
 
 from tekken_auto_accept.alerts import PushOver, Sound
 from tekken_auto_accept.control import TekkenController
 from tekken_auto_accept.models.screen_state import ScreenState
 from tekken_auto_accept.models.tekken_state import TekkenState
 from tekken_auto_accept.models.tekkenconfig import TekkenConfig
+from tekken_auto_accept.settings import CHARACTERS
 from tekken_auto_accept.util import probable_next_state
 
-import logging
 
-
+@Gooey
 def create_parser():
     """Parses command line args."""
     epilog = """
@@ -23,16 +26,17 @@ def create_parser():
         description="Auto accept ranked matches",
         epilog=epilog,
     )
-    parser.add_argument("-c", "--character", required=True)
+    parser.add_argument("-c", "--character", required=True, choices=CHARACTERS[0] + CHARACTERS[1] + CHARACTERS[2])
     parser.add_argument(
         "-s",
         "--side",
         default="p1",
+        choices=["p1", "p2"]
     )
     parser.add_argument(
         "-r",
         "--rematch",
-        help="Auto re-match after 5 seconds",
+        help="Auto re-match",
         default=False,
         action="store_true",
     )
@@ -97,6 +101,9 @@ def main():
         tekken_state.set_state(current_screen)
         commands = tekken_state.current_state.run()
         if commands:
+            if [i for i in ["no_rematch", "post_match"] if i in tekken_state.current_state_name]:
+                if not args.rematch:
+                    continue
             time.sleep(sleep_duration)
         controller.run_commands(commands)
 
