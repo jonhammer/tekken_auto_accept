@@ -1,7 +1,10 @@
+import logging
 import os
 from typing import List
 
 import pyautogui
+
+logger = logging.getLogger(__name__)
 
 
 class ScreenState(object):
@@ -19,12 +22,12 @@ class ScreenState(object):
         """
         self.capture_screen()
         for image in images:
-            #print("looking for {}".format(image))
+            logger.debug("looking for {}".format(image))
             image_name = os.path.basename(image).lower().replace('.png', '')
             if pyautogui.locate(
                     image,
                     self.current_screen,
                     confidence=0.9,
             ):
-                print("Found {}".format(image_name))
+                logger.debug("Found {}".format(image_name))
                 return image_name

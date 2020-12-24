@@ -1,8 +1,11 @@
+import logging
 import os
 
 from tekken_auto_accept.errors import CharacterNotFound
 from tekken_auto_accept.models.screen_state import ScreenState
 from tekken_auto_accept.settings import CHARACTERS
+
+logger = logging.getLogger(__name__)
 
 
 class CharacterSelect(object):
@@ -31,12 +34,12 @@ class CharacterSelect(object):
 
     def run(self):
         self.desired_row, self.desired_col = self.get_char_location(self.desired_char)
-        print("Desired: {}, {}".format(self.desired_row, self.desired_col))
+        logger.debug("Desired: {}, {}".format(self.desired_row, self.desired_col))
         self.get_currently_selected()
         self.current_row, self.current_col = self.get_char_location(self.selected_char)
-        print("Current: {}, {}".format(self.current_row, self.current_col))
+        logger.debug("Current: {}, {}".format(self.current_row, self.current_col))
         self.get_moves()
-        print("Moves: {}".format(self.moves))
+        logger.debug("Moves: {}".format(self.moves))
         return self.moves
 
     def get_currently_selected(self):
@@ -45,7 +48,7 @@ class CharacterSelect(object):
             character = self.scanner.scan_screen(self.portraits)
             if character:
                 self.selected_char = character.replace('.png', '').replace('-p2', '')
-                print("Got char {}".format(character))
+                logger.debug("Got char {}".format(character))
                 return
         raise CharacterNotFound("Could not find any character")
 

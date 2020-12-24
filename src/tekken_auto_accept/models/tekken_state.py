@@ -1,9 +1,13 @@
 import os
+import logging
 from random import randint
 
 from tekken_auto_accept.models.character_select import CharacterSelect
 from tekken_auto_accept.models.menu import TekkenMenu
 from tekken_auto_accept.settings import MENU_DATA
+
+
+logger = logging.getLogger(__name__)
 
 
 class TekkenState:
@@ -56,7 +60,7 @@ class TekkenState:
         self.rematch = tekken_config.rematch
 
     def set_state(self, state_name):
-        print("Setting state to {}".format(state_name))
+        logger.debug("Setting state to {}".format(state_name))
         self.current_state_name = state_name
         self.current_state = getattr(self, state_name)
 
