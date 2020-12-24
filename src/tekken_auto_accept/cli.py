@@ -82,12 +82,14 @@ def main():
         else:
             current_screen = screen_scanner.scan_screen(tekken_state.state_images)
 
-        if not current_screen and not in_match:
+        if not current_screen:
             time.sleep(.5)
             continue
 
         tekken_state.set_state(current_screen)
         commands = tekken_state.current_state.run()
+        if commands:
+            time.sleep(.5)
         controller.run_commands(commands)
 
         if alert_screen in tekken_state.current_state_name and tekken_state.alert:

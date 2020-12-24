@@ -30,7 +30,7 @@ MENU_DATA = {
     },
     "character_select": {
         "image": "character_select.PNG",
-        "commands": "b",
+        "commands": [],
     },
     "new_challenger": {
         "image": "new_challenger.PNG",
@@ -38,9 +38,9 @@ MENU_DATA = {
     },
     "post_match": {
         "image": "post_match.PNG",
-        "commands": ["b"],
+        "commands": [],
     },
-    "no_rematch": {"image": "no_rematch.PNG", "commands": ["b"]},
+    "no_rematch": {"image": "no_rematch.PNG", "commands": []},
     "loading": {
         "image": "loading.PNG",
         "commands": []
@@ -53,6 +53,7 @@ MENU_DATA = {
 
 CHARACTERS = [
     [
+        "kunimitsu",
         "ganryu",
         "zafina",
         "julia",

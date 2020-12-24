@@ -113,7 +113,7 @@ def tap_key(hex_key_code):
     press_key(hex_key_code)
     sleep(0.1)
     release_key(hex_key_code)
-    sleep(0.1)
+    sleep(0.2)
         
         
 class TekkenController:
