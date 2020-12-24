@@ -4,3 +4,7 @@ class TekkenException(BaseException):
 
 class CharacterNotFound(TekkenException):
     pass
+
+
+class AlertError(TekkenException):
+    pass

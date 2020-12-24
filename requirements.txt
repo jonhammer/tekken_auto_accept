@@ -2,3 +2,4 @@ PyAutoGUI~=0.9.50
 setuptools~=50.3.0
 opencv-python~=4.4.0.42
 playsound
+requests

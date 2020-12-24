@@ -32,7 +32,7 @@ def create_parser():
         "-c",
         "--character",
         required=True,
-        choices=CHARACTERS[0] + CHARACTERS[1] + CHARACTERS[2],
+        choices=sorted(CHARACTERS[0] + CHARACTERS[1] + CHARACTERS[2]),
         default='marduk',
     )
     parser.add_argument("-s", "--side", default="p1", choices=["p1", "p2"])
@@ -58,7 +58,6 @@ def create_parser():
         choices=["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"],
         default="INFO",
     )
-
     return parser
 
 
@@ -93,6 +92,7 @@ def main():
     )
     last_alert_time = time.time()
 
+    logger.info("Scanning for game state.")
     while True:
 
         current_screen = None
