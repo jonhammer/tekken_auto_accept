@@ -8,5 +8,8 @@ class TekkenConfig(object):
     def process_args(self, args):
         self.character = args.character
         self.side = args.side
-        self.alert = args.alert
+        if args.alert == 'none':
+            self.alert = None
+        else:
+            self.alert = args.alert
         self.rematch = args.rematch

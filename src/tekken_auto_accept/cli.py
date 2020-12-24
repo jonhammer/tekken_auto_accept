@@ -14,7 +14,9 @@ from tekken_auto_accept.settings import CHARACTERS
 from tekken_auto_accept.util import probable_next_state
 
 
-@Gooey
+@Gooey(
+    program_name="Tekken Auto-Accept",
+)
 def create_parser():
     """Parses command line args."""
     epilog = """
@@ -23,16 +25,17 @@ def create_parser():
 
     """
     parser = argparse.ArgumentParser(
-        description="Auto accept ranked matches",
+        description="Automatically accept ranked matches",
         epilog=epilog,
     )
-    parser.add_argument("-c", "--character", required=True, choices=CHARACTERS[0] + CHARACTERS[1] + CHARACTERS[2])
     parser.add_argument(
-        "-s",
-        "--side",
-        default="p1",
-        choices=["p1", "p2"]
+        "-c",
+        "--character",
+        required=True,
+        choices=CHARACTERS[0] + CHARACTERS[1] + CHARACTERS[2],
+        default='marduk',
     )
+    parser.add_argument("-s", "--side", default="p1", choices=["p1", "p2"])
     parser.add_argument(
         "-r",
         "--rematch",
@@ -41,7 +44,11 @@ def create_parser():
         action="store_true",
     )
     parser.add_argument(
-        "-a", "--alert", help="Send alert", choices=["sound", "pushover"], default=""
+        "-a",
+        "--alert",
+        help="Type of alert to send when match is found",
+        choices=["sound", "pushover", "none"],
+        default="sound",
     )
     parser.add_argument("--pushover_user_token", required=False)
     parser.add_argument("--pushover_app_token", required=False)
@@ -58,6 +65,12 @@ def create_parser():
 def main():
     parser = create_parser()
     args = parser.parse_args()
+
+    if args.alert == "pushover":
+        if not args.pushover_user_token or not args.pushover_app_token:
+            raise ValueError(
+                "Must provide pushover tokens for pushover alerts. See https://pushover.net/"
+            )
 
     logger = logging.getLogger(__name__)
     logging.basicConfig(
@@ -101,7 +114,11 @@ def main():
         tekken_state.set_state(current_screen)
         commands = tekken_state.current_state.run()
         if commands:
-            if [i for i in ["no_rematch", "post_match"] if i in tekken_state.current_state_name]:
+            if [
+                i
+                for i in ["no_rematch", "post_match"]
+                if i in tekken_state.current_state_name
+            ]:
                 if not args.rematch:
                     continue
             time.sleep(sleep_duration)
