@@ -34,12 +34,12 @@ class CharacterSelect(object):
 
     def run(self):
         self.desired_row, self.desired_col = self.get_char_location(self.desired_char)
-        logger.debug("Desired: {}, {}".format(self.desired_row, self.desired_col))
+        logger.debug(f"Desired: {self.desired_row}, {self.desired_col}")
         self.get_currently_selected()
         self.current_row, self.current_col = self.get_char_location(self.selected_char)
-        logger.debug("Current: {}, {}".format(self.current_row, self.current_col))
+        logger.debug(f"Current: {self.current_row}, {self.current_col}")
         self.get_moves()
-        logger.debug("Moves: {}".format(self.moves))
+        logger.debug(f"Moves: {self.moves}")
         return self.moves
 
     def get_currently_selected(self):
@@ -48,7 +48,7 @@ class CharacterSelect(object):
             character = self.scanner.scan_screen(self.portraits)
             if character:
                 self.selected_char = character.replace('.png', '').replace('-p2', '')
-                logger.debug("Got char {}".format(character))
+                logger.debug(f"Got char {character}")
                 return
         raise CharacterNotFound("Could not find any character")
 

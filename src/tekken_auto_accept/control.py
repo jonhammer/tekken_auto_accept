@@ -137,7 +137,7 @@ class TekkenController:
             self.map = P2_MAP
 
     def do_input(self, input_string):
-        logger.debug("Pressing {}".format(input_string))
+        logger.debug(f"Pressing {input_string}")
         input_method = getattr(self, input_string)
         input_method()
 

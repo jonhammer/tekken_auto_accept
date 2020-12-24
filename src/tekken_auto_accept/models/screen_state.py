@@ -22,12 +22,12 @@ class ScreenState(object):
         """
         self.capture_screen()
         for image in images:
-            logger.debug("looking for {}".format(image))
+            logger.debug(f"looking for {image}")
             image_name = os.path.basename(image).lower().replace('.png', '')
             if pyautogui.locate(
                     image,
                     self.current_screen,
                     confidence=0.9,
             ):
-                logger.debug("Found {}".format(image_name))
+                logger.debug(f"Found {image_name}")
                 return image_name

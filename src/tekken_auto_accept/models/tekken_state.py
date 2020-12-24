@@ -60,7 +60,7 @@ class TekkenState:
         self.rematch = tekken_config.rematch
 
     def set_state(self, state_name):
-        logger.debug("Setting state to {}".format(state_name))
+        logger.debug(f"Setting state to {state_name}")
         self.current_state_name = state_name
         self.current_state = getattr(self, state_name)
 
