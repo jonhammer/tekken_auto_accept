@@ -4,6 +4,7 @@ import os
 from tekken_auto_accept.errors import CharacterNotFound
 from tekken_auto_accept.models.screen_state import ScreenState
 from tekken_auto_accept.settings import CHARACTERS
+from tekken_auto_accept.util import resource_path
 
 logger = logging.getLogger(__name__)
 
@@ -26,6 +27,7 @@ class CharacterSelect(object):
     def get_portraits(self, side):
         dir_path = os.path.dirname(os.path.realpath(__file__))
         data_path = os.path.abspath(os.path.join(dir_path, "..", "data", "chars"))
+        data_path = resource_path(data_path)
         if side == "p1":
             self.portraits = [i for i in os.listdir(data_path) if "p2" not in i]
         else:

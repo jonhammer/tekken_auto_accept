@@ -5,7 +5,7 @@ from random import randint
 from tekken_auto_accept.models.character_select import CharacterSelect
 from tekken_auto_accept.models.menu import TekkenMenu
 from tekken_auto_accept.settings import MENU_DATA
-
+from tekken_auto_accept.util import resource_path
 
 logger = logging.getLogger(__name__)
 
@@ -43,6 +43,7 @@ class TekkenState:
 
         dir_path = os.path.dirname(os.path.realpath(__file__))
         data_path = os.path.abspath(os.path.join(dir_path, "..", "data"))
+        data_path = resource_path(data_path)
         self.state_images = [
             os.path.join(data_path, i)
             for i in os.listdir(data_path)
