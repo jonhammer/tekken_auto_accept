@@ -1,8 +1,12 @@
+import logging
 import os
 
 from tekken_auto_accept.errors import CharacterNotFound
 from tekken_auto_accept.models.screen_state import ScreenState
 from tekken_auto_accept.settings import CHARACTERS
+from tekken_auto_accept.util import resource_path
+
+logger = logging.getLogger(__name__)
 
 
 class CharacterSelect(object):
@@ -22,20 +26,22 @@ class CharacterSelect(object):
 
     def get_portraits(self, side):
         dir_path = os.path.dirname(os.path.realpath(__file__))
-        data_path = os.path.abspath(os.path.join(dir_path, '..', 'data', 'chars'))
-        if side == 'p1':
-            self.portraits = [i for i in os.listdir(data_path) if 'p2' not in i]
+        data_path = os.path.abspath(os.path.join(dir_path, "..", "data", "chars"))
+        data_path = resource_path(data_path)
+        if side == "p1":
+            self.portraits = [i for i in os.listdir(data_path) if "p2" not in i]
         else:
-            self.portraits = [i for i in os.listdir(data_path) if 'p2' in i]
+            self.portraits = [i for i in os.listdir(data_path) if "p2" in i]
         self.portraits = [os.path.join(data_path, i) for i in self.portraits]
 
     def run(self):
         self.desired_row, self.desired_col = self.get_char_location(self.desired_char)
-        print(self.current_row, self.current_col)
-        print(self.desired_row, self.desired_col)
+        logger.debug(f"Desired: {self.desired_row}, {self.desired_col}")
         self.get_currently_selected()
         self.current_row, self.current_col = self.get_char_location(self.selected_char)
+        logger.debug(f"Current: {self.current_row}, {self.current_col}")
         self.get_moves()
+        logger.debug(f"Moves: {self.moves}")
         return self.moves
 
     def get_currently_selected(self):
@@ -43,8 +49,8 @@ class CharacterSelect(object):
         for _i in range(3):
             character = self.scanner.scan_screen(self.portraits)
             if character:
-                self.selected_char = character.replace('.png', '').replace('-p2', '')
-                print("Got char {}".format(character))
+                self.selected_char = character.replace(".png", "").replace("-p2", "")
+                logger.debug(f"Got char {character}")
                 return
         raise CharacterNotFound("Could not find any character")
 
@@ -63,14 +69,14 @@ class CharacterSelect(object):
     def move_down(self):
         self.moves.append("down")
         if self.current_row == 0:
-            self.current_col += 3
+            self.current_col += 2
         elif self.current_row == 2 and self.current_col in [0, 1, 2]:
             self.current_row = 1
             return
         elif self.current_row == 2 and self.current_col in [16, 17, 18]:
             self.current_row = 1
             return
-        self.current_row = (self.current_row + 1) % len(CHARACTERS) - 1
+        self.current_row = self.current_row + 1
 
     def move_up(self):
         self.moves.append("up")
@@ -80,15 +86,15 @@ class CharacterSelect(object):
             return
         if self.current_row == 1 and self.current_col in [16, 17, 18]:
             self.current_row = 0
-            self.current_col = 12
+            self.current_col = 13
             return
 
         if self.current_row == 0:
-            self.current_col += 3
+            self.current_col += 2
         if self.current_row == 1:
-            self.current_col -= 3
+            self.current_col -= 2
 
-        self.current_row = (self.current_row - 1) % len(CHARACTERS)
+        self.current_row = self.current_row - 1
 
     def move_right(self):
         self.moves.append("right")
@@ -100,6 +106,8 @@ class CharacterSelect(object):
 
     def get_moves(self):
         while True:
+            if len(self.moves) > 50:
+                raise IndexError
             if self.current_row > self.desired_row:
                 self.move_up()
                 continue
@@ -109,8 +117,15 @@ class CharacterSelect(object):
             if self.current_col < self.desired_col:
                 self.move_right()
                 continue
-            elif self.current_col > self.desired_col:
+            if self.current_col > self.desired_col:
                 self.move_left()
                 continue
-            self.moves.append('b')
-            break
+            if (
+                self.current_row == self.desired_row
+                and self.current_col == self.desired_col
+            ):
+                break
+        self.moves.append("b")
+
+    def no_select(self):
+        return None

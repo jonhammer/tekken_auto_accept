@@ -1,9 +1,13 @@
-import http.client
+import logging
 import os
-import urllib
 from abc import ABC, abstractmethod
 
+import requests
 from playsound import playsound
+
+from tekken_auto_accept.errors import AlertError
+
+logger = logging.getLogger(__name__)
 
 
 class Alert(ABC):
@@ -14,6 +18,7 @@ class Alert(ABC):
 
 class Sound(Alert):
     def trigger(self):
+        logger.info("Sounding Alert")
         data_path = os.path.join(
             os.path.dirname(os.path.realpath(__file__)), "..", "data", "alerts"
         )
@@ -22,23 +27,21 @@ class Sound(Alert):
 
 
 class PushOver(Alert):
+
+    URL = "https://api.pushover.net/1/messages.json"
+
     def __int__(self):
         self.app_token = None
         self.user_token = None
 
     def trigger(self):
-        conn = http.client.HTTPSConnection("api.pushover.net:443")
-        conn.request(
-            "POST",
-            "/1/messages.json",
-            urllib.parse.urlencode(
-                {
-                    "token": self.app_token,
-                    "user": self.user_token,
-                    "message": "Found Tekken match",
-                    "priority": 1,
-                }
-            ),
-            {"Content-type": "application/x-www-form-urlencoded"},
-        )
-        conn.getresponse()
+        logger.info("Sending Alert")
+        data = {
+            "token": self.app_token,
+            "user": self.user_token,
+            "message": "Found Tekken Match",
+            "priority": 1,
+        }
+        response = requests.post(self.URL, data=data)
+        if not response.status_code == 200:
+            raise AlertError("Unable to send PushOver Alert")
